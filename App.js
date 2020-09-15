@@ -18,24 +18,24 @@ import firestore from '@react-native-firebase/firestore';
 
 async function getInstanceId() {
   const id = await iid().get();
-  console.log('Current Instance ID: ', id);
   const token = await iid().getToken();
-  console.log('Current token ', token);
-
-  const ref = await firestore().collection('new_project_iids').doc(id)
-  .set({ id: token ,uid:"Isaac"});
-  console.log('instance id stored');
+  await firestore().collection('new_project_iids')
+    .doc(id)
+    .set({ id: token, uid: "Isaac" });
 }
 
 async function addNewProject() {
-  const ref= await firestore().collection('projects').add({ uid:"Isaac",name:'Ghana Water'});
-  console.log('New project created at '+ ref.path);
+  await firestore()
+    .collection('projects')
+    .add({ uid: "Isaac", name: 'Ghana Water' });
 }
 
 const App = () => {
 
   useEffect(() => {
+    //To handle notification in the foreground
     const unsubscribe = messaging().onMessage(async remoteMessage => {
+      
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
 
@@ -48,9 +48,9 @@ const App = () => {
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <View>
-        <Button style={styles.button} onPress={() => getInstanceId()} title="Send text to firestore"></Button>
-        <Button style={styles.button} onPress={() => addNewProject()} title="Add a new project"></Button>
-        
+          <Button style={styles.button} onPress={() => getInstanceId()} title="Send IID token to firestore"></Button>
+          <Button style={styles.button} onPress={() => addNewProject()} title="Add a new project"></Button>
+
         </View>
       </SafeAreaView>
     </>
